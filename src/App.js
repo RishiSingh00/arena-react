@@ -1,25 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import {Route, Routes} from "react-router-dom";
+import Auth from "./components/Auth";
+import Contest from "./components/Contest";
+import CreateContest from "./components/CreateContest";
+import Dashboard from "./components/Dashboard";
+import LeaderBoard from "./components/LeaderBoard";
+import Lobby from "./components/Lobby";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/" element={<Auth/>}/>
+            <Route path="Dashboard" element={<Dashboard/>}/>
+            <Route path="Dashboard/Lobby" element={<Lobby/>}/>
+            <Route path="Dashboard/CreateContest" element={<CreateContest/>}/>
+            <Route path="Dashboard/Lobby/Contest" element={<Contest/>}/>
+            <Route path="Dashboard/Lobby/Contest/LeaderBoard" element={<LeaderBoard/>}/>
+        </Routes>
+    );
 }
-
-export default App;
