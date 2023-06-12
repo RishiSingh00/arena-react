@@ -1,14 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {get, getDatabase, onValue, ref, set} from "firebase/database";
 import app from "../firebase";
+import {useNavigate} from "react-router-dom";
 
 const db = getDatabase(app);
 
 function Contest() {
 
+    const navigate = useNavigate();
+
     const [questions, setQuestions] = useState({});
-    const [participantData, setParticipantData] = useState({questions: ["","","","","","","","","","","","","","","","",""]});
-    const [scoresData, setScoresData] = useState({});
+    const [participantData, setParticipantData] = useState({questions: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]});
+    const [sortedScore, setSortedScore] = useState([]);
+    const [scoreData, setScoreData] = useState({});
+    const [distance, setDistance] = useState(0);
 
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
     const questionRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/Questions");
@@ -23,45 +28,13 @@ function Contest() {
 
         get(participantRef).then((snapshot) => {
             setParticipantData(snapshot.val());
-            console.log("Participants")
-            console.log(snapshot.val());
         })
 
-        onValue(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores"), (snapshot) => {
-            fillLeaderBoard();
+        onValue(scoresRef, (snapshot) => {
+            setScoreData(snapshot.val());
+            const sortedData = Object.entries(snapshot.val()).sort((a, b) => b[1] - a[1]);
+            setSortedScore(sortedData);
         });
-
-    }, []);
-
-
-    startContest();
-
-    function startTimer(countDownDate) {
-        let x = setInterval(function () {
-            // Get today's date and time
-            var now = new Date().getTime();
-            // Find the distance between now and the count-down date
-            var distance = countDownDate - now;
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Output the result in an element with id="demo"
-            document.getElementById("timerDiv").innerHTML = '<div id="timer">' + hours + "h "
-                + minutes + "m " + seconds + "s " + '</div>';
-
-
-            // If the count-down is over, write some text
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("timerDiv").innerHTML = 'time end';
-                set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/status"), 2);
-                window.location.href = "endContest.html";
-            }
-        }, 1000);
-    }
-
-    function startContest() {
 
         onValue(durationRef, (snapshot) => {
             const data = snapshot.val()
@@ -69,64 +42,28 @@ function Contest() {
             var countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
             startTimer(countDownDate);
         })
-    }
 
-//---------------
+    }, []);
 
-    var lbTable = document.createElement('table');
+    console.log("sorted scores");
+    console.log(sortedScore);
 
-// Create the table header
-    var lbThead = document.createElement('thead');
-    var lbHeaderRow = document.createElement('tr');
+    function startTimer(countDownDate) {
+        let x = setInterval(function () {
+            // Get today's date and time
+            var now = new Date().getTime();
+            // Find the distance between now and the count-down date
+            var distance = countDownDate - now;
+            setDistance(distance);
 
-    var lbCol1Header = document.createElement('th');
-    lbCol1Header.textContent = 'User';
-
-    var lbCol2Header = document.createElement('th');
-    lbCol2Header.textContent = 'Score';
-
-    lbHeaderRow.appendChild(lbCol1Header);
-    lbHeaderRow.appendChild(lbCol2Header);
-
-    lbThead.appendChild(lbHeaderRow);
-    lbTable.appendChild(lbThead);
-
-// Create the table body
-    var lbTbody = document.createElement('tbody');
-
-
-    function fillLeaderBoard() {
-        get(scoresRef).then((snapshot) => {
-            const data = snapshot.val();
-            var dataStr = JSON.stringify(data);
-            console.log(dataStr);
-            var sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]);
-            console.log(sortedData);
-            while (lbTbody.firstChild) {
-                lbTbody.removeChild(lbTbody.firstChild);
+            // If the count-down is over, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/status"), 2);
+                navigate("LeaderBoard");
             }
-            for (var i = 0; i < sortedData.length; i++) {
-                var row = document.createElement('tr');
-
-                var user = document.createElement('td');
-                user.textContent = sortedData[i][0];
-
-                var score = document.createElement('td');
-                score.textContent = sortedData[i][1];
-
-                row.appendChild(user);
-                row.appendChild(score);
-
-                lbTbody.appendChild(row);
-            }
-
-            lbTable.appendChild(lbTbody);
-            document.getElementById('leaderboardDiv').appendChild(lbTable);
-        });
+        }, 1000);
     }
-
-    console.log(questions);
-
 
     const handleClicks = (e) => {
         if (e.target.type === 'checkbox') {
@@ -143,11 +80,8 @@ function Contest() {
                 var temp = participantData;
                 temp["questions"][queNo] = ans;
                 set(participantRef, temp);
-                get(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores/" + localStorage.getItem('username'))).then((snapshot) => {
-                    let scoreData = snapshot.val();
-                    scoreData++;
-                    set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores/" + localStorage.getItem('username')), scoreData);
-                });
+                scoreData[localStorage.getItem('username')] += 1;
+                set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores/" + localStorage.getItem('username')), scoreData[localStorage.getItem('username')]);
                 row.querySelector('input').disabled = true;
                 cells[3].querySelector('input').disabled = true;
             }
@@ -163,8 +97,17 @@ function Contest() {
                      borderColor: "black",
                      borderStyle: "dotted",
                      marginLeft: "3px",
-
                  }}>
+                {distance > 0 ?
+                    (<div
+                        id="timer">
+                        {Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}h
+                        {Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}m
+                        {Math.floor((distance % (1000 * 60)) / 1000)}s
+                    </div>) :
+                    (<div> Time End
+                    </div>)
+                }
             </div>
             <div className="container">
                 <div id="contestDiv"
@@ -196,7 +139,7 @@ function Contest() {
                                     (<>
                                         <td><input type="text" value={participantData["questions"][i + ""]}
                                                    disabled={true}/></td>
-                                        <td><input type="checkbox" checked="true" disabled={true}/></td>
+                                        <td><input type="checkbox" checked={true} disabled={true}/></td>
                                     </>) :
                                     (<>
                                         <td><input type="text"/></td>
@@ -218,6 +161,22 @@ function Contest() {
                          borderColor: "black",
                          borderStyle: "dotted"
                      }}>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(sortedScore).map((i) => (<tr key={i}>
+                            <td>{sortedScore[i][0]}</td>
+                            <td>{sortedScore[i][1]}</td>
+                        </tr>))}
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
 

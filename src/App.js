@@ -15,7 +15,7 @@ export default function App() {
             <Route path="Dashboard/Lobby" element={<Lobby/>}/>
             <Route path="Dashboard/CreateContest" element={<CreateContest/>}/>
             <Route path="Dashboard/Lobby/Contest" element={<Contest/>}/>
-            <Route path="Dashboard/Lobby/EndContest" element={<EndContest/>}/>
+            <Route path="Dashboard/Lobby/LeaderBoard" element={<LeaderBoard/>}/>
             <Route path="Dashboard/Lobby/Contest/LeaderBoard" element={<LeaderBoard/>}/>
         </Routes>
     );

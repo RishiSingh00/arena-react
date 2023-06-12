@@ -45,7 +45,7 @@ function Lobby() {
             }
             navigate("Contest");
         } else if (data.status === 2) {
-            navigate("EndContest");
+            navigate("LeaderBoard");
         }
     }
 
