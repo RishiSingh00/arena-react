@@ -5,6 +5,7 @@ import CreateContest from "./components/CreateContest";
 import Dashboard from "./components/Dashboard";
 import LeaderBoard from "./components/LeaderBoard";
 import Lobby from "./components/Lobby";
+import EndContest from "./components/EndContest";
 
 export default function App() {
     return (
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="Dashboard/Lobby" element={<Lobby/>}/>
             <Route path="Dashboard/CreateContest" element={<CreateContest/>}/>
             <Route path="Dashboard/Lobby/Contest" element={<Contest/>}/>
+            <Route path="Dashboard/Lobby/EndContest" element={<EndContest/>}/>
             <Route path="Dashboard/Lobby/Contest/LeaderBoard" element={<LeaderBoard/>}/>
         </Routes>
     );
