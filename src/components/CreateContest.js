@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {getDatabase, push, ref, set} from "firebase/database";
 import app from "../firebase";
 import {useNavigate} from "react-router-dom";
+import '../styles/CreateContest.scoped.css';
 
 
 const db = getDatabase(app);

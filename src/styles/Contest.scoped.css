@@ -1,0 +1,58 @@
+/* Styling for the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+/* Styling for table header */
+thead {
+    background-color: #f9f9f9;
+}
+
+th {
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+
+}
+
+/* Styling for table cells */
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Styling for alternate rows */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Styling for hyperlink */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Styling for input */
+input[type="text"],
+input[type="checkbox"] {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+}
+
+.container div {
+    flex: 1;
+    padding: 20px;
+    border-style: dotted;
+}
