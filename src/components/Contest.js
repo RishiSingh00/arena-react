@@ -29,7 +29,7 @@ function Contest() {
 
         get(participantRef).then((snapshot) => {
             setParticipantData(snapshot.val());
-        })
+        });
 
         onValue(scoresRef, (snapshot) => {
             setScoreData(snapshot.val());

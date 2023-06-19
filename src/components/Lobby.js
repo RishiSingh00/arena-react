@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import app from "../firebase.js";
-import {child, getDatabase, onValue, ref, set, update,} from "firebase/database";
+import {child, get, getDatabase, onValue, ref, set, update,} from "firebase/database";
 import {useNavigate} from "react-router-dom";
 
 const db = getDatabase(app);
@@ -9,17 +9,33 @@ function Lobby() {
 
     const navigate = useNavigate();
 
+
     const [data, setData] = useState({});
     const [timerStyle, setTimerStyle] = useState({display: "none"});
+    const [lobby, setLobby] = useState([]);
+
 
     const contestRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"));
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
+    const lobbyRef = ref(db, "Contest/" + localStorage.getItem("joinContestId")+"/lobby");
+
+    // onValue(lobbyRef,(snapshot) => {
+    //    // setLobby(snapshot.val());
+    //     console.log(`helll ${snapshot.val().keys}`);
+    // });
 
     useEffect(() => {
+
         onValue(contestRef, (snapshot) => {
             const fetchedData = snapshot.val();
             setData(fetchedData);
             onStatusChange(fetchedData)
+        });
+
+        onValue(lobbyRef, (snapshot) =>{
+            const lobbyData = snapshot.val();
+            const lobbyKey = Object.keys(snapshot.val()).filter(i => i !== "null");
+            setLobby(()=> lobbyKey);
         });
     }, []);
 
@@ -54,6 +70,14 @@ function Lobby() {
         update(contestRef, {"status": 1}).then(r => console.log("status set"));
     }
 
+    const handleUnload = () => {
+        update(lobbyRef, {
+            [localStorage.getItem('username')]: null
+        }).then(r  =>{});
+    }
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
 
     return (
         <div>
@@ -69,6 +93,34 @@ function Lobby() {
             </div>
             <div id="ownerDiv">
                 {data.owner} will start the contest
+            </div>
+            <div id="lobbyDiv"
+                 // style={{
+                 //     marginLeft: "3px",
+                 //     display: "flex",
+                 //     textAlign: "left",
+                 //     width: "60%",
+                 //     height: "90vh",
+                 //     borderColor: "black",
+                 //     borderStyle: "dotted"
+                 // }}
+            >
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Participants</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {lobby.map((i) => (
+                        i === 'null' ?"" : (
+                            <tr key={i}>
+                                <td>{i}</td>
+                            </tr>
+                        )
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

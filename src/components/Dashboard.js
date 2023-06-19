@@ -1,5 +1,5 @@
 import React from 'react';
-import {getDatabase, ref,onValue} from "firebase/database";
+import {getDatabase, ref, onValue, set,update} from "firebase/database";
 import app from "../firebase";
 import {useNavigate} from "react-router-dom";
 
@@ -16,6 +16,9 @@ const Dashboard = () => {
             onValue(contestRef,(snapshot) => {
                 if(snapshot.exists()) {
                     localStorage.setItem("joinContestId",joinInput.value);
+                    update(ref(db,"Contest/"+joinInput.value+"/lobby"), {
+                        [localStorage.getItem("username")] : "null"
+                    });
                     navigate("Lobby");
                 }
                 else {
