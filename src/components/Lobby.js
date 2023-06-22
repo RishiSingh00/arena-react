@@ -9,7 +9,6 @@ function Lobby() {
 
     const navigate = useNavigate();
 
-
     const [data, setData] = useState({});
     const [timerStyle, setTimerStyle] = useState({display: "none"});
     const [lobby, setLobby] = useState([]);
@@ -19,10 +18,6 @@ function Lobby() {
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
     const lobbyRef = ref(db, "Contest/" + localStorage.getItem("joinContestId")+"/lobby");
 
-    // onValue(lobbyRef,(snapshot) => {
-    //    // setLobby(snapshot.val());
-    //     console.log(`helll ${snapshot.val().keys}`);
-    // });
 
     useEffect(() => {
 
@@ -38,8 +33,6 @@ function Lobby() {
             setLobby(()=> lobbyKey);
         });
     }, []);
-
-    console.log(data);
 
     const onStatusChange = (data) => {
         setTimerStyle({display: "none"});
@@ -60,6 +53,7 @@ function Lobby() {
                 set(child(contestRef, "participants/" + username + "/questions/" + i), "").then(r => console.log("questions set"));
             }
             navigate("Contest");
+            window.location.reload();
         } else if (data.status === 2) {
             navigate("LeaderBoard");
         }
@@ -94,17 +88,7 @@ function Lobby() {
             <div id="ownerDiv">
                 {data.owner} will start the contest
             </div>
-            <div id="lobbyDiv"
-                 // style={{
-                 //     marginLeft: "3px",
-                 //     display: "flex",
-                 //     textAlign: "left",
-                 //     width: "60%",
-                 //     height: "90vh",
-                 //     borderColor: "black",
-                 //     borderStyle: "dotted"
-                 // }}
-            >
+            <div id="lobbyDiv">
                 <table>
                     <thead>
                     <tr>
