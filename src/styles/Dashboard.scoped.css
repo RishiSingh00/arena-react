@@ -61,7 +61,7 @@ h1 {
 /* Modal Content */
 .modal{
     display: none;
-    margin-left: 25%a;
+    margin-left: 25%;
 }
 .dialog-content {
     background-color: #fefefe;

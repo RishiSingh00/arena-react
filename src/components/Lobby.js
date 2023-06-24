@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import app from "../firebase.js";
-import {child, getDatabase, onValue, ref, set, update,} from "firebase/database";
+import {child, get, getDatabase, onValue, ref, set, update,} from "firebase/database";
 import {useNavigate} from "react-router-dom";
 
 const db = getDatabase(app);
@@ -11,19 +11,28 @@ function Lobby() {
 
     const [data, setData] = useState({});
     const [timerStyle, setTimerStyle] = useState({display: "none"});
+    const [lobby, setLobby] = useState([]);
+
 
     const contestRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"));
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
+    const lobbyRef = ref(db, "Contest/" + localStorage.getItem("joinContestId")+"/lobby");
+
 
     useEffect(() => {
+
         onValue(contestRef, (snapshot) => {
             const fetchedData = snapshot.val();
             setData(fetchedData);
             onStatusChange(fetchedData)
         });
-    }, []);
 
-    console.log(data);
+        onValue(lobbyRef, (snapshot) =>{
+            const lobbyData = snapshot.val();
+            const lobbyKey = Object.keys(snapshot.val()).filter(i => i !== "null");
+            setLobby(()=> lobbyKey);
+        });
+    }, []);
 
     const onStatusChange = (data) => {
         setTimerStyle({display: "none"});
@@ -44,6 +53,7 @@ function Lobby() {
                 set(child(contestRef, "participants/" + username + "/questions/" + i), "").then(r => console.log("questions set"));
             }
             navigate("Contest");
+            window.location.reload();
         } else if (data.status === 2) {
             navigate("LeaderBoard");
         }
@@ -54,6 +64,14 @@ function Lobby() {
         update(contestRef, {"status": 1}).then(r => console.log("status set"));
     }
 
+    const handleUnload = () => {
+        update(lobbyRef, {
+            [localStorage.getItem('username')]: null
+        }).then(r  =>{});
+    }
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
 
     return (
         <div>
@@ -69,6 +87,24 @@ function Lobby() {
             </div>
             <div id="ownerDiv">
                 {data.owner} will start the contest
+            </div>
+            <div id="lobbyDiv">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Participants</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {lobby.map((i) => (
+                        i === 'null' ?"" : (
+                            <tr key={i}>
+                                <td>{i}</td>
+                            </tr>
+                        )
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
