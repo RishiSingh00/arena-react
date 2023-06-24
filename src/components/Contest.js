@@ -15,11 +15,13 @@ function Contest() {
     const [sortedScore, setSortedScore] = useState([]);
     const [scoreData, setScoreData] = useState({});
     const [distance, setDistance] = useState(0);
+    const [topic, setTopic] = useState('');
 
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
     const questionRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/Questions");
     const participantRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/" + localStorage.getItem('username'))
     const scoresRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores")
+    const topicRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"))
 
 
     useEffect(() => {
@@ -29,6 +31,10 @@ function Contest() {
 
         get(participantRef).then((snapshot) => {
             setParticipantData(snapshot.val());
+        });
+
+        get(topicRef).then((snapshot) => {
+            setTopic(snapshot.val().topic);
         });
 
         onValue(scoresRef, (snapshot) => {
@@ -43,6 +49,7 @@ function Contest() {
             var countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
             startTimer(countDownDate);
         })
+
 
     }, []);
 
@@ -93,17 +100,24 @@ function Contest() {
         <div>
             <div id="timerDiv"
                  style={{
+                     textAlign: "center",
                      marginBottom: "5px",
-                     height: "10vh",
+                     height: "100%",
                      borderColor: "black",
                      borderStyle: "dotted",
                      marginLeft: "3px",
+                     fontFamily: "sans-serif",
+                     fontSize: "1.7rem",
+                     padding: "10px"
                  }}>
+                <div>
+                    <u>{topic}</u>
+                </div>
                 {distance > 0 ?
                     (<div
                         id="timer">
-                        {Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}h
-                        {Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}m
+                        {Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}h :&nbsp;
+                        {Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}m :&nbsp;
                         {Math.floor((distance % (1000 * 60)) / 1000)}s
                     </div>) :
                     (<div> Time End
@@ -119,7 +133,7 @@ function Contest() {
                          width: "60%",
                          height: "90vh",
                          borderColor: "black",
-                         borderStyle: "dotted"
+                         // borderStyle: "dotted"
                      }}>
                     <table>
                         <thead>
@@ -160,7 +174,7 @@ function Contest() {
                          textAlign: "right",
                          height: "90vh",
                          borderColor: "black",
-                         borderStyle: "dotted"
+                         // borderStyle: "dotted"
                      }}>
 
                     <table>

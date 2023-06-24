@@ -16,7 +16,6 @@ th {
     padding: 12px;
     text-align: center;
     font-weight: bold;
-
 }
 
 /* Styling for table cells */
@@ -54,5 +53,5 @@ input[type="checkbox"] {
 .container div {
     flex: 1;
     padding: 20px;
-    border-style: dotted;
+    /*border-style: dotted;*/
 }
