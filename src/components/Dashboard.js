@@ -4,6 +4,7 @@ import app from "../firebase";
 import {useNavigate} from "react-router-dom";
 import '../styles/Dashboard.scoped.css';
 import cancelLogo from '../assets/cancelIcon.png';
+import {userID} from "./User";
 
 const db = getDatabase(app);
 
@@ -28,6 +29,8 @@ const Dashboard = () => {
             }
         }
     }
+
+    console.log("From Dsh: ",userID);
 
     const connectContest = () => {
         console.log(contestID);

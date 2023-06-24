@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import app from "../firebase.js";
 import {child, get, getDatabase, onValue, ref, set, update,} from "firebase/database";
 import {useNavigate} from "react-router-dom";
+import "../styles/Lobby.scoped.css";
 
 const db = getDatabase(app);
 
