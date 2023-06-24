@@ -64,15 +64,6 @@ function Lobby() {
         update(contestRef, {"status": 1}).then(r => console.log("status set"));
     }
 
-    const handleUnload = () => {
-        update(lobbyRef, {
-            [localStorage.getItem('username')]: null
-        }).then(r  =>{});
-    }
-
-    window.addEventListener('beforeunload', handleUnload);
-    window.addEventListener('popstate', handleUnload);
-
     return (
         <div>
             <h1><b>Lobby</b></h1>
