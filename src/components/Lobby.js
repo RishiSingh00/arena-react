@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import app from "../firebase.js";
-import {child, get, getDatabase, onValue, ref, set, update,} from "firebase/database";
+import {child, getDatabase, onValue, ref, set, update,} from "firebase/database";
 import {useNavigate} from "react-router-dom";
 import "../styles/Lobby.scoped.css";
 
@@ -66,25 +66,25 @@ function Lobby() {
     }
 
     return (
-        <div>
-            <h1><b>Lobby</b></h1>
-            <div id="contest-code">code: {localStorage.getItem("joinContestId")}</div>
-            <br/>
+        <div className="container">
+            <h1>Lobby</h1>
+            <div className="info">
+                Good Luck!
+                <div id="contest-code">Contest ID: {localStorage.getItem("joinContestId")}</div>
+                <div id="ownerDiv">
+                    {data.owner} will start the contest
+                </div>
+            </div>
+
             <div id="timerDiv" style={timerStyle}>
                 <button id="timer" onClick={startCountDown}>Start Timer</button>
             </div>
-            <div id="waitDiv">
-                <p id="waitText">Wait for the contest...</p>
-                <h2></h2>
-            </div>
-            <div id="ownerDiv">
-                {data.owner} will start the contest
-            </div>
+
             <div id="lobbyDiv">
                 <table>
                     <thead>
                     <tr>
-                        <th>Participants</th>
+                        <th>People In lobby for contest</th>
                     </tr>
                     </thead>
                     <tbody>
