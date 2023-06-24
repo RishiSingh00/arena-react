@@ -41,6 +41,7 @@ const Dashboard = () => {
                     update(ref(db, `Contest/${contestID}/lobby`), {
                         [localStorage.getItem("username")]: "null"
                     }).then(() => dialog.style.display = "none");
+                    clearTimeout(myInterval);
                     navigate("Lobby");
                 } else {
                     setErrorMessage("You can't even copy correctly, Wrong ID! 😔")
@@ -53,6 +54,7 @@ const Dashboard = () => {
     }
 
     function create() {
+        clearTimeout(myInterval);
         navigate("CreateContest");
     }
 
@@ -69,9 +71,11 @@ const Dashboard = () => {
         'Win or lose, you will always learn something! 🤗',
         'Be persistent, and your wish will be granted 🧞‍'];
     var i = 0;
-    setInterval(() => {
+    const myInterval = setInterval(() => {
         i++;
-        document.getElementById("notice").innerHTML = noticeContent[i % noticeContent.length];
+        if (document.getElementById("notice") !== null)
+            document.getElementById("notice").innerHTML = noticeContent[i % noticeContent.length];
+
     }, 1000 * 4);
 
     return (
