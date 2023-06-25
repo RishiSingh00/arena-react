@@ -34,6 +34,10 @@
     color: white;
 }
 
+.greet span {
+    color: #ee952a;
+}
+
 .actions{
     width: 40%;
     display: flex;

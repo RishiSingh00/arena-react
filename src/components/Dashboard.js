@@ -85,7 +85,7 @@ const Dashboard = () => {
 
         <div className="container">
             <div className="greet">
-                Hola! {localStorage.getItem("username")}
+                <span>Hola!</span> {localStorage.getItem("username")}
                 {/*नमस्ते 🙏🏻 {localStorage.getItem("username")}*/}
             </div>
             <div className="actions">
