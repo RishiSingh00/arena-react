@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import app from "../firebase.js";
-import {child, getDatabase, onValue, ref, set, update,} from "firebase/database";
+import {child, get, getDatabase, onValue, ref, set, update,} from "firebase/database";
 import "../styles/Lobby.scoped.css";
 import {useNavigate} from "react-router-dom";
 
@@ -14,12 +14,18 @@ function Lobby() {
     const [timerStyle, setTimerStyle] = useState({display: "none"});
     const [lobby, setLobby] = useState({user: "Not Ready"});
     const [participantStatus, setParticipantStatus] = useState("Not Ready");
+    const [topic, setTopic] = useState('');
 
     const contestRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"));
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
     const lobbyRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/lobby");
+    const topicRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"))
 
     useEffect(() => {
+
+        get(topicRef).then((snapshot) => {
+            setTopic(snapshot.val().topic);
+        });
 
         onValue(contestRef, (snapshot) => {
             const fetchedData = snapshot.val();
@@ -129,6 +135,7 @@ function Lobby() {
     return (
         <div className="container">
             <h1>Lobby</h1>
+            <div className="topic"><u>{topic}</u></div>
             <div className="info">
                 Good Luck!
                 <div id="contest-code">Contest ID: {localStorage.getItem("joinContestId")}</div>
