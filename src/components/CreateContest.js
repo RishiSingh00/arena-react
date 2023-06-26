@@ -45,7 +45,6 @@ const CreateContest = () => {
             time: {endAt: timeInput.value},
             topic: topicInput.value,
             status: 0, // 0 for not started, 1 for started, 2 for ended
-            lobby : {"null":"null"}
         });
 
         const rows = table.rows;

@@ -3,8 +3,11 @@ import React, {useState} from 'react';
 import {getDatabase, onValue, ref} from "firebase/database";
 import app from "../firebase";
 import '../styles/Auth.scoped.css';
-
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {userID} from "./User";
 const db = getDatabase(app);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
 function Auth() {
     const navigate = useNavigate();
@@ -31,6 +34,33 @@ function Auth() {
         });
     }
 
+    const loginWithGoogle = () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                userID.setUser(user);
+                localStorage.setItem('username', user.displayName.split(" ")[0]);
+                // IdP data available using getAdditionalUserInfo(result)
+                // ...
+                console.log(user);
+                navigate("Dashboard");
+            }).catch((error) => {
+            // Handle Errors here.
+            console.log(error);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
+    }
+
     return (
         <div>
             <h1>Code Arena</h1>
@@ -45,8 +75,8 @@ function Auth() {
                 <label htmlFor="passwordInput">Password</label>
                 <input type="password" placeholder="Password" id="passwordInput"
                        onChange={(e) => setPassword(e.target.value)} value={password}/>
-
                 <button id="loginButton" onClick={isValidUser}>Log In</button>
+                <button onClick={loginWithGoogle}>Login With Google</button>
             </div>
         </div>
     );
