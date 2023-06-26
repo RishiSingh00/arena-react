@@ -32,12 +32,16 @@ h1{
     margin-top: 8px;
 }
 
-#timerDiv{
+.actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     margin-top: 4%;
     margin-bottom: 4%;
 }
 
-#timerDiv button{
+#timerDiv {
     margin-left: 10px;
     margin-right: 10px;
     font-size: 1.3rem;
@@ -48,11 +52,11 @@ h1{
     cursor: pointer;
     color: white;
     padding: 13px;
-    transition: 0.1s;
+    transition: 0.3s;
     box-shadow: 10px 20px rgba(0, 0, 0, 0.24);
 }
 
-#timerDiv button:hover{
+#timerDiv:hover{
     background: rgba(45, 45, 45, 0.8);
     transform: translate(10px,20px);
     box-shadow: 0px 0px rgba(0, 0, 0, 0.24);

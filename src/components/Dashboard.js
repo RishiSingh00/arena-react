@@ -17,7 +17,6 @@ const Dashboard = () => {
         console.log("Join")
         var dailog = document.getElementById("dialog");
         dailog.style.display = "block";
-        console.log("b=blo")
         var span = document.getElementsByClassName("close")[0];
         span.onclick = function () {
             dailog.style.display = "none";
@@ -42,10 +41,11 @@ const Dashboard = () => {
                 if (snapshot.exists()) {
                     localStorage.setItem("joinContestId", contestID);
                     update(ref(db, `Contest/${contestID}/lobby`), {
-                        [localStorage.getItem("username")]: "null"
+                        [localStorage.getItem("username")]: "Not Ready"
                     }).then(() => dialog.style.display = "none");
                     clearTimeout(myInterval);
                     navigate("Lobby");
+                    window.location.reload();
                 } else {
                     setErrorMessage("You can't even copy correctly, Wrong ID! 😔")
                 }
