@@ -52,7 +52,7 @@ function Auth() {
                 const user = result.user;
                 userID.setUser(user);
                 localStorage.setItem('user', JSON.stringify(user));
-                localStorage.setItem('username', user.displayName.split(" ")[0]);
+                localStorage.setItem('username', user.displayName);
                 // IdP data available using getAdditionalUserInfo(result)
                 // ...
                 console.log(user);

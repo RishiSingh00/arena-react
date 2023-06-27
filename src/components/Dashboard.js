@@ -11,6 +11,7 @@ const Dashboard = () => {
     const [contestID, setContestID] = useState("");
     const [errorMessage, setErrorMessage] = useState("Did you copied Contest ID? You copy cat! 🙀");
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
 
     const join = () => {
         console.log("Join")
@@ -81,7 +82,6 @@ const Dashboard = () => {
     }, 1000 * 4);
 
 
-    const user = JSON.parse(localStorage.getItem("user"));
 
     return (
         <div className="container">
@@ -100,7 +100,7 @@ const Dashboard = () => {
                 </div>
             </div>
             <div className="greet">
-                <span>Hola!</span> {localStorage.getItem("username")}
+                <span>Hola!</span> {user.displayName.split(" ")[0]}
                 {/*नमस्ते 🙏🏻 {localStorage.getItem("username")}*/}
             </div>
             <div className="actions">
