@@ -1,0 +1,24 @@
+.tooltip-options ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tooltip-options li {
+    padding: 5px 0;
+}
+
+.option-button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: lightgray;
+    border: none;
+    cursor: pointer;
+}
+
+.option-button.selected {
+    background-color: darkgray;
+    color: white;
+}
+
+/* Additional styling as needed */

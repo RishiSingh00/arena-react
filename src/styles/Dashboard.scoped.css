@@ -25,6 +25,44 @@
     }
 }
 
+.header{
+    width: 95%;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    top: 12px;
+    color: #fff;
+}
+
+.profile-container img{
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.profile-container img:hover + .logout{
+    display: block;
+}
+
+.logout{
+    display: none;
+    padding: 5px;
+    font-family: 'Belanosima', sans-serif;
+    margin-top: 10px;
+    cursor: pointer;
+    background: #ee952a;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.06rem;
+    font-weight: bold;
+    color: #000;
+}
+
 .greet{
     width: 100%;
     text-align: center;

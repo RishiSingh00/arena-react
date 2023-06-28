@@ -4,7 +4,6 @@ import app from "../firebase";
 import {useNavigate} from "react-router-dom";
 import '../styles/Dashboard.scoped.css';
 import cancelLogo from '../assets/cancelIcon.png';
-import {userID} from "./User";
 
 const db = getDatabase(app);
 
@@ -12,6 +11,7 @@ const Dashboard = () => {
     const [contestID, setContestID] = useState("");
     const [errorMessage, setErrorMessage] = useState("Did you copied Contest ID? You copy cat! 🙀");
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
 
     const join = () => {
         console.log("Join")
@@ -29,7 +29,7 @@ const Dashboard = () => {
         }
     }
 
-    console.log("From Dsh: ",userID);
+    // console.log("From Dsh: ",userID);
 
     const connectContest = () => {
         console.log(contestID);
@@ -81,11 +81,26 @@ const Dashboard = () => {
 
     }, 1000 * 4);
 
-    return (
 
+
+    return (
         <div className="container">
+            <div className="header">
+                <div className="logo">
+                    <span className="logoText">&lt; Code Arena /&gt;</span>
+                </div>
+
+                <div className="profile-container">
+                    <img src={user.photoURL} onClick={()=>{
+                        clearTimeout(myInterval);
+                        localStorage.clear();
+                        navigate("/");
+                    }} alt="img" />
+                    <div className="logout">Logout?</div>
+                </div>
+            </div>
             <div className="greet">
-                <span>Hola!</span> {localStorage.getItem("username")}
+                <span>Hola!</span> {user.displayName.split(" ")[0]}
                 {/*नमस्ते 🙏🏻 {localStorage.getItem("username")}*/}
             </div>
             <div className="actions">
