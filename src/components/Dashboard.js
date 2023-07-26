@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {getDatabase, onValue, ref, update} from "firebase/database";
 import app from "../firebase";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +12,23 @@ const Dashboard = () => {
     const [errorMessage, setErrorMessage] = useState("Did you copied Contest ID? You copy cat! 🙀");
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
+
+
+    useEffect(()=>{
+        var i = 0;
+        const myInterval = setInterval(() => {
+            i++;
+            if (document.getElementById("notice") !== null)
+                document.getElementById("notice").innerHTML = noticeContent[i % noticeContent.length];
+
+        }, 1000 * 4);
+
+
+        return () => {
+            clearInterval(myInterval);
+        }
+
+    }, [])
 
     const join = () => {
         console.log("Join")
@@ -43,7 +60,7 @@ const Dashboard = () => {
                     update(ref(db, `Contest/${contestID}/lobby`), {
                         [localStorage.getItem("username")]: "Not Ready"
                     }).then(() => dialog.style.display = "none");
-                    clearTimeout(myInterval);
+                    // clearTimeout(myInterval);
                     navigate("Lobby");
                     window.location.reload();
                 } else {
@@ -57,7 +74,7 @@ const Dashboard = () => {
     }
 
     function create() {
-        clearTimeout(myInterval);
+        // clearTimeout(myInterval);
         navigate("CreateContest");
     }
 
@@ -73,13 +90,11 @@ const Dashboard = () => {
         'Practice and practice, you will be the best! 🤓',
         'Win or lose, you will always learn something! 🤗',
         'Be persistent, and your wish will be granted 🧞‍'];
-    var i = 0;
-    const myInterval = setInterval(() => {
-        i++;
-        if (document.getElementById("notice") !== null)
-            document.getElementById("notice").innerHTML = noticeContent[i % noticeContent.length];
 
-    }, 1000 * 4);
+
+
+
+
 
 
 
@@ -92,7 +107,7 @@ const Dashboard = () => {
 
                 <div className="profile-container">
                     <img src={user.photoURL} onClick={()=>{
-                        clearTimeout(myInterval);
+                        // clearTimeout(myInterval);
                         localStorage.clear();
                         navigate("/");
                     }} alt="img" />
