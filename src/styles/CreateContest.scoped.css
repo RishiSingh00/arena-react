@@ -1,15 +1,191 @@
+.container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    font-family: 'Belanosima', sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    color: black;
+}
+
+.meta-info {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.input{
+    margin-top: 1rem;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    border-radius: 10px;
+    border-style: none;
+    background: #f1f1f1;
+    padding: 13px;
+    transition: 0.3s;
+    box-shadow: 10px 20px rgba(0, 0, 0, 0.24);
+}
+
+.input input{
+    margin-left: 10px;
+    margin-right: 10px;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    border-radius: 10px;
+    border-style: none;
+    background: #ffffff;
+    padding: 13px;
+}
+
+.container button {
+    margin-bottom: 1rem;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    border-radius: 10px;
+    border-style: none;
+    background: #2d2d2d;
+    cursor: pointer;
+    color: white;
+    padding: 13px;
+    transition: 0.3s;
+    box-shadow: 10px 20px rgba(0, 0, 0, 0.24);
+}
+
+.container button:hover {
+    transform: translate(10px,20px);
+    box-shadow: none;
+}
+
+.table-div {
+    margin-top: 5rem;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.table th {
+    border: 1px solid black;
+    padding: 10px;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+}
+
+.table td {
+    border: 1px solid black;
+    padding: 10px;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+}
+
+.table td input {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 90%;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid black;
+    background: #ffffff;
+    padding: 13px;
+}
+
+.table td button {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1.3rem;
+    border-radius: 10px;
+    border-style: none;
+    background: #2d2d2d;
+    cursor: pointer;
+    color: white;
+    padding: 13px;
+}
+
 .popup {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
+    width: 30%;
     padding: 20px;
     background-color: #f1f1f1;
     border: 1px solid #ccc;
+    border-radius: 10px;
+    z-index: 1;
+    font-family: "Belanosima", sans-serif;
 }
-#popupButton {
+
+
+.dialog-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.contest {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    padding:10px;
+    border-radius: 10px;
+    font-weight: bold;
+    background-color: #fff;
+}
+
+.contest-id{
+    margin-right: 10px;
+    font-size: x-large;
+}
+
+.contest-text {
+    font-size: large;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+#popupButton {
+    margin-top: 10px;
+    font-family: Belanosima, sans-serif;
+    font-weight: 200;
+    font-size: 1rem;
+    border-radius: 10px;
+    border-style: none;
+    background: #2d2d2d;
+    cursor: pointer;
+    color: white;
+    padding: 13px;
+    transition: 0.3s;
 }

@@ -1,120 +1,171 @@
-import React, {useState} from 'react';
-import {getDatabase, push, ref, set} from "firebase/database";
+import React, { useState } from "react";
+import { getDatabase, push, ref, set } from "firebase/database";
 import app from "../firebase";
-import {useNavigate} from "react-router-dom";
-import '../styles/CreateContest.scoped.css';
-
+import { useNavigate } from "react-router-dom";
+import copyIcon from "../assets/copy-icon.png";
+import tickIcon from "../assets/tick-icon.png";
+import deleteIcon from "../assets/delete-icon.png";
+import plusIcon from "../assets/plus-icon.png";
+import "../styles/CreateContest.scoped.css";
 
 const db = getDatabase(app);
 
 const CreateContest = () => {
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
+  const [questions, setQuestions] = useState([]);
+  const [contestID, setContestID] = useState("");
+  const [time, setTime] = useState("");
+  const [topic, setTopic] = useState("");
 
-    const [data1, setData1] = useState("");
-    const [data2, setData2] = useState("");
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-    var table = document.getElementById("table");
-    var topicInput = document.getElementById("topicInput");
-    var timeInput = document.getElementById("timeInput");
-    var popupText = document.getElementById('popupText');
-
-    function addDataToTable() {
-        console.log('hello');
-        if (data1 && data2) {
-            console.log(data1 + " " + data2);
-            var row = table.insertRow();
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            cell1.innerHTML = data1;
-            cell2.innerHTML = data2;
-
-            // Clear input values
-            setData1("");
-            setData2("");
-        }
-
+  function addDataToTable() {
+    console.log("adding to the table");
+    if (name && url) {
+      // Add data to table
+      setQuestions([...questions, { queName: name, queUrl: url }]);
+      setName("");
+      setUrl("");
     }
+  }
 
+  function writeUserData() {
+    const reference = ref(db, "Contest");
+    const constRef = push(reference)
 
-    function writeUserData() {
-        const reference = ref(db, "Contest");
-        const constRef = push(reference)
+    set(constRef, {
+        owner: localStorage.getItem("username"),
+        time: {endAt: time},
+        topic: topic,
+        Questions: questions,
+        status: 0, // 0 for not started, 1 for started, 2 for ended
+    });
+    setContestID(constRef.key);
+    showPopup();
+  }
 
-        set(constRef, {
-            owner: localStorage.getItem("username"),
-            time: {endAt: timeInput.value},
-            topic: topicInput.value,
-            status: 0, // 0 for not started, 1 for started, 2 for ended
-        });
+  function showPopup(constRef) {
+    const content = document.getElementById("container");
+    content.style.pointerEvents = "none"; // Disable interactions with the content
+    const popup = document.getElementById("myPopup");
+    popup.style.display = "block";
+  }
 
-        const rows = table.rows;
+  function deleteQuestion(index, e) {
+    console.log("Editing: ", index);
+    const newQuestions = questions.filter((item, i) => i !== index);
+    setQuestions(newQuestions);
+  }
 
-        for (let i = 1; i < rows.length; i++) {
-            addQuestion(constRef.key, i, rows[i].cells[0].innerHTML, rows[i].cells[1].innerHTML);
-        }
-        popupText.innerHTML = constRef.key + " is your Contest ID. Store and Share it with your friends to join contest.";
-        console.log(constRef.key);
-        showPopup();
-    }
+  const copyToClipBoard = () => {
+    document.getElementById("clip").src = tickIcon;
+    document.getElementById("contest-id").innerText = "Copied!";
+    navigator.clipboard.writeText(contestID);
+    const id = setTimeout(() => {
+        document.getElementById("clip").src = copyIcon;
+        document.getElementById("contest-id").innerText = contestID;
+    },1000 * 1.5);
 
-    function addQuestion(id, queNumber, queName, queUrl) {
-        const reference = ref(db, "Contest/" + id + "/Questions/" + queNumber);
-        set(reference, {
-            queName: queName,
-            queUrl: queUrl
-        });
-    }
+    clearTimeout(id);
+    
+  }
 
+  return (
+    <div>
+      <div id="container" className="container">
+        <h1>"Competition Gives You A Chance To Show Your Talent."</h1>
+        <button type="button" onClick={writeUserData}>
+          Create Contest
+        </button>
 
-// popup code
-    function showPopup(constRef) {
-        var content = document.getElementById("content");
-        content.style.pointerEvents = "none"; // Disable interactions with the content
-        var popup = document.getElementById("myPopup");
-        popup.style.display = "block";
-    }
-
-    var popupButton = document.getElementById("popupButton");
-
-    function closePopup() {
-        navigate("/Dashboard");
-    }
-
-
-    return (
-        <div>
-            <div id="content">
-                <h1><b>Create Contest</b></h1>
-                <br/>
-                <label htmlFor="topicInput">Contest Topic</label>
-                <input type="text" id="topicInput" placeholder="Topic"/><br/>
-                <label htmlFor="timeInput">Duration</label>
-                <input type="number" min="1" id="timeInput" placeholder="time "/><br/>
-                <input type="text" id="queNameInput" placeholder="Question Name"
-                       onChange={(e) => setData1(e.target.value)}
-                       value={data1}/>
-                <input type="text" id="queUrlInput" placeholder="Question Url"
-                       onChange={(e) => setData2(e.target.value)}
-                       value={data2}/>
-                <br/>
-                <button id="addButton" onClick={addDataToTable}>ADD</button>
-                <table id="table">
-                    <tbody>
-                    <tr>
-                        <th>Que. Name</th>
-                        <th>Que. Url</th>
-                    </tr>
-                    </tbody>
-                </table>
-                <br/><br/>
-                <button id="createButton" onClick={writeUserData}>CREATE</button>
-            </div>
-            <div id="myPopup" className="popup">
-                <p id="popupText"></p>
-                <button id="popupButton" onClick={closePopup}>DONE</button>
-            </div>
+        <div className="meta-info">
+          <div className="input">
+            <label htmlFor="topicInput">Contest Topic: </label>
+            <input type="text" id="topicInput" placeholder="Topic" value={topic} onChange={(e)=>setTopic(e.target.value)} />
+          </div>
+          <div className="input">
+            <label htmlFor="timeInput">Duration: </label>
+            <input type="number" min="1" id="timeInput" placeholder="time " value={time} onChange={(e) => setTime(e.target.value)} />
+          </div>
         </div>
-    );
+
+        <div className="table-div">
+          <table id="table" className="table">
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Action</th>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="text"
+                    id="queNameInput"
+                    placeholder="Question Name"
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    id="queUrlInput"
+                    placeholder="Question Url"
+                    onChange={(e) => setUrl(e.target.value)}
+                    value={url}
+                  />
+                </td>
+                <td>
+                  <img
+                    id="addButton"
+                    onClick={addDataToTable}
+                    src={plusIcon}
+                    alt="add"
+                  />
+                </td>
+              </tr>
+              {questions.map((question, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{question.queName}</td>
+                    <td><a href={question.queUrl} target="_blank">{question.queUrl}</a></td>
+                    <td>
+                      <img
+                        id="editBtn"
+                        onClick={(e) => deleteQuestion(index, e)}
+                        src={deleteIcon}
+                        alt="edit"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="myPopup" className="popup">
+        <div className="dialog-content">
+          <div className="contest">
+            <div id="contest-id" className="contest-id">{contestID}</div>
+            <div>
+              <img id="clip" width="30px" height="30px" onClick={copyToClipBoard} src={copyIcon} alt="copy-btn" />
+            </div>
+          </div>
+          <div className="contest-text">
+            This is your Contest ID. Store and Share it with your friends to
+            join contest.
+          </div>
+          <button id="popupButton" onClick={() => navigate("/Dashboard")}>
+            DONE
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CreateContest;
