@@ -105,11 +105,14 @@ function Contest() {
                      marginBottom: "5px",
                      height: "100%",
                      borderColor: "black",
-                     borderStyle: "dotted",
-                     marginLeft: "3px",
-                     fontFamily: "sans-serif",
+                     fontFamily: "Belanosima, sans-serif",
                      fontSize: "1.7rem",
-                     padding: "10px"
+                     padding: "10px",
+                     border: "1px solid black",
+                     borderBottomRightRadius: "40px",
+                     borderBottomLeftRadius: "40px",
+                     backgroundColor: "#2f2f2f",
+                     color: "white",
                  }}>
                 <div>
                     <u>{topic}</u>
