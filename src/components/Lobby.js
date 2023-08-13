@@ -91,7 +91,7 @@ function Lobby() {
             console.log("queNum" + queNum);
             const username = localStorage.getItem("username");
             set(child(contestRef, "participants/scores/" + username), 0).then(r => console.log("score set"));
-            for (let i = 1; i < queNum; i++) {
+            for (let i = 0; i < queNum; i++) {
                 set(child(contestRef, "participants/" + username + "/questions/" + i), "").then(r => console.log("questions set"));
             }
             navigate("Contest");

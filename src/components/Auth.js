@@ -100,24 +100,24 @@ function Auth() {
                 {/*<button id="loginButton" onClick={isValidUser}>Log In</button>*/}
                 <button onClick={loginWithGoogle}>Login With Google</button>
             </div>
-            <div className="leaderboard">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {Object.keys(rankList).map((i) => (<tr key={i}>
-                        <td>{parseInt(i)+1}</td>
-                        <td>{rankList[i][0]}</td>
-                        <td>{rankList[i][1]}</td>
-                    </tr>))}
-                    </tbody>
-                </table>
-            </div>
+            {/*<div className="leaderboard">*/}
+            {/*    <table>*/}
+            {/*        <thead>*/}
+            {/*        <tr>*/}
+            {/*            <th>Rank</th>*/}
+            {/*            <th>Name</th>*/}
+            {/*            <th>Score</th>*/}
+            {/*        </tr>*/}
+            {/*        </thead>*/}
+            {/*        <tbody>*/}
+            {/*        {Object.keys(rankList).map((i) => (<tr key={i}>*/}
+            {/*            <td>{parseInt(i)+1}</td>*/}
+            {/*            <td>{rankList[i][0]}</td>*/}
+            {/*            <td>{rankList[i][1]}</td>*/}
+            {/*        </tr>))}*/}
+            {/*        </tbody>*/}
+            {/*    </table>*/}
+            {/*</div>*/}
         </div>
     );
 }

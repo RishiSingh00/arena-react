@@ -27,6 +27,7 @@ function Contest() {
     useEffect(() => {
         get(questionRef).then((snapshot) => {
             setQuestions(snapshot.val());
+            console.log(snapshot.val());
         });
 
         get(participantRef).then((snapshot) => {
@@ -45,7 +46,7 @@ function Contest() {
 
         onValue(durationRef, (snapshot) => {
             const data = snapshot.val()
-            console.log(data);
+            // console.log(data);
             var countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
             startTimer(countDownDate);
         })
@@ -53,8 +54,8 @@ function Contest() {
 
     }, []);
 
-    console.log("sorted scores");
-    console.log(sortedScore);
+    // console.log("sorted scores");
+    // console.log(sortedScore);
 
     function startTimer(countDownDate) {
         let x = setInterval(function () {
@@ -77,7 +78,7 @@ function Contest() {
         if (e.target.type === 'checkbox') {
             var row = e.target.parentNode.parentNode;
             var cells = row.querySelectorAll('td');
-            var queNo = cells[0].textContent;
+            var queNo = cells[0].textContent-1;
             if (cells[2].querySelector('input').value === "") {
                 alert("Please enter answer");
                 cells[3].querySelector('input').checked = false;
@@ -147,7 +148,7 @@ function Contest() {
                         <tbody>
                         {Object.keys(questions).map((i) => (
                             <tr key={i}>
-                                <td>{i}</td>
+                                <td>{parseInt(i)+1}</td>
                                 <td><a href={questions[i + ""]["queUrl"]}
                                        target="_blank">{questions[i + ""]["queName"]}</a></td>
                                 {participantData["questions"][i + ""] !== "" ?
