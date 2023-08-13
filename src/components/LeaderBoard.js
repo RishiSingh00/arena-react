@@ -48,8 +48,21 @@ function LeaderBoard() {
 
     return (
         <body>
-        <h1>LeaderBoard</h1>
-        <div id="leaderboardDiv" style={{width: "100%", height: "100vh"}} >
+        <div style={{
+            textAlign: "center",
+            marginBottom: "5px",
+            height: "100%",
+            borderColor: "black",
+            fontFamily: "Belanosima, sans-serif",
+            fontSize: "2rem",
+            padding: "10px",
+            border: "1px solid black",
+            borderBottomRightRadius: "40px",
+            borderBottomLeftRadius: "40px",
+            backgroundColor: "#2f2f2f",
+            color: "white",
+        }}>Leader Board</div>
+        <div id="leaderboardDiv"  >
             <table>
                 <thead>
                 <tr>
@@ -59,16 +72,31 @@ function LeaderBoard() {
                 </thead>
                 <tbody>
                 {Object.keys(sortedScore).map((i) => (<tr  key={i}>
-                    <td onClick={handleRowClick} >{sortedScore[i][0]}</td>
+                    <td style={{color:"blue"}} onClick={handleRowClick} >{sortedScore[i][0]}</td>
                     <td>{sortedScore[i][1]}</td>
                 </tr>))}
                 </tbody>
             </table>
         </div>
-        <div id="popupContainer">
 
-            <table>
-                <thead>
+        <div id="popupContainer" style={
+            {
+                borderRadius: "12px",
+            }
+        }>
+
+            <table style={{
+                backgroundColor: "white",
+                borderRadius: "12px",
+                fontSize: "1.2rem",
+                fontFamily: "Belanosima, sans-serif",
+                width: "100%",
+                textAlign: "center",
+            }}>
+                <thead style={{
+                    backgroundColor: "#2f2f2f",
+                    color: "white",
+                }}>
                 <tr>
                     <th>Que. No.</th>
                     <th>Question</th>
@@ -80,14 +108,31 @@ function LeaderBoard() {
                     <tr key={index}>
                         <td>{index+1}</td>
                         <td>{item}</td>
-                        <td>{answer[index]}</td>
+                        <td><a href={answer[index]} target="_blank">{answer[index]}</a></td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-            <button id="exitView" onClick={closePopup}>OK</button>
+            <button id="exitView" style={
+                {
+                    width: "100%",
+                    fontFamily: "Belanosima, sans-serif",
+                    fontSize: "1.0rem",
+                    padding: "10px",
+                    border: "1px solid black",
+                    borderRadius: "40px",
+                    backgroundColor: "#2f2f2f",
+                    color: "white",
+
+                }
+            } onClick={closePopup}>OK</button>
         </div>
-        <button id="doneButton" onClick={()=>navigate("/Dashboard")}>DONE</button>
+        <div style={{display:"flex",justifyContent:"center",width: "100%"}}>
+            <button id="popupButton" onClick={() => navigate("/Dashboard")}>
+                Back to Dashboard
+            </button>
+        </div>
+
         </body>
     );
 }
