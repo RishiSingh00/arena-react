@@ -47,7 +47,7 @@ function LeaderBoard() {
     }
 
     return (
-        <body>
+        <div>
         <div style={{
             textAlign: "center",
             marginBottom: "5px",
@@ -128,12 +128,16 @@ function LeaderBoard() {
             } onClick={closePopup}>OK</button>
         </div>
         <div style={{display:"flex",justifyContent:"center",width: "100%"}}>
-            <button id="popupButton" onClick={() => navigate("/Dashboard")}>
+            <button id="popupButton" onClick={() =>{
+                localStorage.removeItem("joinContestId");
+                localStorage.removeItem("submittedTest");
+                navigate("/Dashboard")
+            }}>
                 Back to Dashboard
             </button>
         </div>
 
-        </body>
+        </div>
     );
 }
 

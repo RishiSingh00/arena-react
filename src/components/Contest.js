@@ -25,6 +25,11 @@ function Contest() {
 
 
     useEffect(() => {
+
+        if(localStorage.getItem("submittedTest") === "true"){
+            navigate("LeaderBoard");
+        }
+
         get(questionRef).then((snapshot) => {
             setQuestions(snapshot.val());
             console.log(snapshot.val());
@@ -197,6 +202,37 @@ function Contest() {
                     </table>
 
                 </div>
+            </div>
+
+            <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '10px',
+            }}>
+                <button
+                    style={{
+                        width: "12%",
+                        height: "50px",
+                        borderRadius: "10px",
+                        backgroundColor: "#2f2f2f",
+                        color: "white",
+                        fontFamily: "Belanosima, sans-serif",
+                        fontSize: "1.2rem",
+                        border: "1px solid black",
+                        marginLeft: "3px",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                        textAlign: "center",
+                        justifyContent: "center",
+
+                    }}
+                    onClick={() => {
+                        localStorage.setItem("submittedTest", "true");
+                        navigate("LeaderBoard")
+                    }}>Submit</button>
             </div>
 
         </div>
