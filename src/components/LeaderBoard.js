@@ -14,6 +14,8 @@ function LeaderBoard() {
     const [answer , setAnswer] = useState([]);
     const [question, setQuestion] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
+    const [distance, setDistance] = useState(0);
 
     useEffect(() => {
         onValue(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores"), (snapshot) => {
@@ -24,8 +26,30 @@ function LeaderBoard() {
             console.log(Object.values(snapshot.val()).map(item => item.queName));
             setQuestion(Object.values(snapshot.val()).map(item => item.queName));
         });
+        onValue(durationRef, (snapshot) => {
+            const data = snapshot.val()
+            // console.log(data);
+            var countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
+            startTimer(countDownDate);
+        })
     },[]);
 
+    function startTimer(countDownDate) {
+        let x = setInterval(function () {
+            // Get today's date and time
+            var now = new Date().getTime();
+            // Find the distance between now and the count-down date
+            var distance = countDownDate - now;
+            setDistance(distance);
+
+            // If the count-down is over, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/status"), 2);
+                navigate("LeaderBoard");
+            }
+        }, 1000);
+    }
 
 
     function showAnswer(cell) {
@@ -61,7 +85,19 @@ function LeaderBoard() {
             borderBottomLeftRadius: "40px",
             backgroundColor: "#2f2f2f",
             color: "white",
-        }}>Leader Board</div>
+        }}>
+            {distance > 0 ?
+                (<div
+                    id="timer">
+                    <span style={{color:"red"}}>Live</span> LeaderBoard<br/>
+                    {Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}h :&nbsp;
+                    {Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}m :&nbsp;
+                    {Math.floor((distance % (1000 * 60)) / 1000)}s
+                </div>) :
+                (<div> Final LeaderBoard
+                </div>)
+            }
+        </div>
         <div id="leaderboardDiv"  >
             <table>
                 <thead>
