@@ -46,7 +46,6 @@ function LeaderBoard() {
             if (distance < 0) {
                 clearInterval(x);
                 set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/status"), 2);
-                navigate("LeaderBoard");
             }
         }, 1000);
     }
@@ -95,6 +94,8 @@ function LeaderBoard() {
                     {Math.floor((distance % (1000 * 60)) / 1000)}s
                 </div>) :
                 (<div> Final LeaderBoard
+                    <br/>
+                    <span style={{color:"red"}}>Contest Ended</span>
                 </div>)
             }
         </div>
