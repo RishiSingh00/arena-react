@@ -1,76 +1,83 @@
-import React, {useEffect, useState} from 'react';
-import {get, getDatabase, onValue, ref, set} from "firebase/database";
+import React, { useEffect, useState, useRef } from 'react';
+import { get, getDatabase, onValue, ref, set } from "firebase/database";
 import app from "../firebase";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../styles/Contest.scoped.css';
 
 const db = getDatabase(app);
 
 function Contest() {
-
     const navigate = useNavigate();
 
-    const [questions, setQuestions] = useState({});
-    const [participantData, setParticipantData] = useState({questions: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]});
+    const [questions, setQuestions] = useState([]);
+    const [participantData, setParticipantData] = useState({ questions: Array(17).fill("") });
     const [sortedScore, setSortedScore] = useState([]);
     const [scoreData, setScoreData] = useState({});
     const [distance, setDistance] = useState(0);
     const [topic, setTopic] = useState('');
+    const initialized = useRef(false);  // Use useRef instead of useState
 
     const durationRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/time");
     const questionRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/Questions");
-    const participantRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/" + localStorage.getItem('username'))
-    const scoresRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores")
-    const topicRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"))
-
+    const participantRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/" + localStorage.getItem('username'));
+    const scoresRef = ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores");
+    const topicRef = ref(db, "Contest/" + localStorage.getItem("joinContestId"));
 
     useEffect(() => {
-
-        if(localStorage.getItem("submittedTest") === "true"){
+        if (localStorage.getItem("submittedTest") === "true") {
             navigate("LeaderBoard");
         }
 
-        get(questionRef).then((snapshot) => {
-            setQuestions(snapshot.val());
-            console.log(snapshot.val());
-        });
+        const fetchQuestions = async () => {
+            const snapshot = await get(questionRef);
+            setQuestions(snapshot.val() || []);
+        };
 
-        get(participantRef).then((snapshot) => {
-            setParticipantData(snapshot.val());
-        });
+        const fetchParticipantData = async () => {
+            const snapshot = await get(participantRef);
+            const data = snapshot.val();
+            if (data) {
+                setParticipantData(data);
+            }
+            initialized.current = true;  // Mark as initialized after fetching data
+        };
 
-        get(topicRef).then((snapshot) => {
+        const fetchTopic = async () => {
+            const snapshot = await get(topicRef);
             setTopic(snapshot.val().topic);
-        });
+        };
 
-        onValue(scoresRef, (snapshot) => {
+        fetchQuestions();
+        fetchTopic();
+        if (!initialized.current) {
+            fetchParticipantData();
+        }
+
+        const scoresListener = onValue(scoresRef, (snapshot) => {
             setScoreData(snapshot.val());
             const sortedData = Object.entries(snapshot.val()).sort((a, b) => b[1] - a[1]);
             setSortedScore(sortedData);
         });
 
-        onValue(durationRef, (snapshot) => {
-            const data = snapshot.val()
-            // console.log(data);
-            var countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
+        const durationListener = onValue(durationRef, (snapshot) => {
+            const data = snapshot.val();
+            const countDownDate = new Date(data.startAt + data.endAt * 60 * 60 * 1000).getTime();
             startTimer(countDownDate);
-        })
+        });
 
-
-    }, []);
-
-    // console.log("sorted scores");
-    // console.log(sortedScore);
+        return () => {
+            // Clean up listeners on unmount
+            scoresListener();
+            durationListener();
+        };
+    }, [navigate]);
 
     function startTimer(countDownDate) {
-        let x = setInterval(function () {
-            // Get today's date and time
-            var now = new Date().getTime();
-            // Find the distance between now and the count-down date
-            var distance = countDownDate - now;
+        const x = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
             setDistance(distance);
 
-            // If the count-down is over, write some text
             if (distance < 0) {
                 clearInterval(x);
                 set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/status"), 2);
@@ -79,27 +86,42 @@ function Contest() {
         }, 1000);
     }
 
-    const handleClicks = (e) => {
+    const handleClicks = async (e) => {
         if (e.target.type === 'checkbox') {
-            var row = e.target.parentNode.parentNode;
-            var cells = row.querySelectorAll('td');
-            var queNo = cells[0].textContent-1;
-            if (cells[2].querySelector('input').value === "") {
+            const row = e.target.parentNode.parentNode;
+            const cells = row.querySelectorAll('td');
+            const queNo = cells[0].textContent - 1;
+            const ans = cells[2].querySelector('input').value;
+
+            if (ans === "") {
                 alert("Please enter answer");
                 cells[3].querySelector('input').checked = false;
-            } else {
-                const ans = cells[2].querySelector('input').value;
-                console.log(queNo);
-                console.log(ans);
-                var temp = participantData;
-                temp["questions"][queNo] = ans;
-                set(participantRef, temp);
-                scoreData[localStorage.getItem('username')] += 1;
-                set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores/" + localStorage.getItem('username')), scoreData[localStorage.getItem('username')]);
+                return; // Exit the function to avoid further execution
+            }
+
+            const temp = { ...participantData };
+            temp.questions[queNo] = ans;
+
+            try {
+                await set(participantRef, temp);
+
+                const username = localStorage.getItem('username');
+                const newScore = (scoreData[username] || 0) + 1;
+                await set(ref(db, "Contest/" + localStorage.getItem("joinContestId") + "/participants/scores/" + username), newScore);
+
                 row.querySelector('input').disabled = true;
                 cells[3].querySelector('input').disabled = true;
+
+                // Update local participantData state
+                setParticipantData(temp);
+            } catch (error) {
+                console.error("Error updating Firebase:", error);
             }
         }
+    };
+
+    if (questions.length === 0) {
+        return <div>Loading...</div>; // Display a loading state until questions are fetched
     }
 
     return (
@@ -123,8 +145,7 @@ function Contest() {
                     <u>{topic}</u>
                 </div>
                 {distance > 0 ?
-                    (<div
-                        id="timer">
+                    (<div id="timer">
                         {Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}h :&nbsp;
                         {Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}m :&nbsp;
                         {Math.floor((distance % (1000 * 60)) / 1000)}s
@@ -141,8 +162,6 @@ function Contest() {
                          textAlign: "left",
                          width: "60%",
                          height: "90vh",
-                         borderColor: "black",
-                         // borderStyle: "dotted"
                      }}>
                     <table>
                         <thead>
@@ -154,23 +173,17 @@ function Contest() {
                         </tr>
                         </thead>
                         <tbody>
-                        {Object.keys(questions).map((i) => (
-                            <tr key={i}>
-                                <td>{parseInt(i)+1}</td>
-                                <td><a href={questions[i + ""]["queUrl"]}
-                                       target="_blank">{questions[i + ""]["queName"]}</a></td>
-                                {participantData["questions"][i + ""] !== "" ?
-                                    (<>
-                                        <td><input type="text" value={participantData["questions"][i + ""]}
-                                                   disabled={true}/></td>
-                                        <td><input type="checkbox" checked={true} disabled={true}/></td>
-                                    </>) :
-                                    (<>
-                                        <td><input type="text"/></td>
-                                        <td><input type="checkbox" onClick={(e) => handleClicks(e)}/></td>
-                                    </>)
-                                }
-
+                        {questions.map((question, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td><a href={question.queUrl}
+                                       target="_blank" rel="noopener noreferrer">{question.queName}</a></td>
+                                <td><input type="text" value={participantData.questions[index] || ""} onChange={(e) => {
+                                    const temp = { ...participantData };
+                                    temp.questions[index] = e.target.value;
+                                    setParticipantData(temp);
+                                }} /></td>
+                                <td><input type="checkbox" onClick={(e) => handleClicks(e)} /></td>
                             </tr>
                         ))}
                         </tbody>
@@ -182,10 +195,7 @@ function Contest() {
                          display: "flex",
                          textAlign: "right",
                          height: "90vh",
-                         borderColor: "black",
-                         // borderStyle: "dotted"
                      }}>
-
                     <table>
                         <thead>
                         <tr>
@@ -194,24 +204,25 @@ function Contest() {
                         </tr>
                         </thead>
                         <tbody>
-                        {Object.keys(sortedScore).map((i) => (<tr key={i}>
-                            <td>{sortedScore[i][0]}</td>
-                            <td>{sortedScore[i][1]}</td>
-                        </tr>))}
+                        {sortedScore.map(([name, score], i) => (
+                            <tr key={i}>
+                                <td>{name}</td>
+                                <td>{score}</td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
-
                 </div>
             </div>
 
             <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: '10px',
-            }}>
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: '10px',
+                }}>
                 <button
                     style={{
                         width: "12%",
@@ -227,14 +238,12 @@ function Contest() {
                         marginBottom: "5px",
                         textAlign: "center",
                         justifyContent: "center",
-
                     }}
                     onClick={() => {
                         localStorage.setItem("submittedTest", "true");
                         navigate("LeaderBoard")
                     }}>Submit</button>
             </div>
-
         </div>
     );
 }
